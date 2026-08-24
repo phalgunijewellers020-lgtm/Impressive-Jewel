@@ -1,0 +1,11 @@
+{
+  "title": "Impressive Jewel",
+  "description": "This dashboard application provides users with real-time analytics and insights, enabling data-driven decision-making for businesses and organizations.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
