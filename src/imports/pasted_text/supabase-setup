@@ -1,0 +1,462 @@
+# FIX SUPABASE AUTHENTICATION AND DATABASE SETUP
+
+The application UI has already been created.
+
+The current Login page shows:
+
+```text
+Invalid login credentials
+```
+
+and also shows:
+
+```text
+Setup required?
+Run the SQL setup script in your Supabase SQL editor, then create your first admin user in Supabase Auth → Users.
+```
+
+The application must now be made fully functional.
+
+## 1. DO NOT CHANGE THE EXISTING UI DESIGN
+
+Do NOT redesign the Login page.
+
+Do NOT change the dashboard visual design.
+
+Do NOT remove existing functionality.
+
+Keep the current professional layout, typography, spacing, colors, sidebar design, and responsive behavior.
+
+Only fix the backend/Supabase functionality required for authentication and application startup.
+
+---
+
+# 2. VERIFY SUPABASE CONNECTION
+
+Check the complete Supabase integration.
+
+Verify that:
+
+* Supabase URL is correctly configured
+* Supabase public/anon key is correctly configured
+* Environment variables are correctly loaded
+* The application is actually connecting to the intended Supabase project
+* No credentials are hardcoded incorrectly
+* No service-role key is exposed in frontend code
+
+Do not expose any private/service-role credentials to the browser.
+
+---
+
+# 3. SUPABASE AUTHENTICATION
+
+Use Supabase Authentication for login.
+
+Login must use:
+
+```text
+Email
+Password
+```
+
+The login flow must be:
+
+```text
+Login Form
+      ↓
+Supabase Auth
+      ↓
+Successful Authentication
+      ↓
+Load User Profile / Role
+      ↓
+Check Permission
+      ↓
+Dashboard
+```
+
+If authentication fails, show:
+
+```text
+Invalid login credentials.
+```
+
+Do not reveal whether the email or password specifically is incorrect.
+
+---
+
+# 4. ADMIN USER SETUP
+
+The application must support creating the first Admin user through:
+
+```text
+Supabase
+→ Authentication
+→ Users
+→ Add User
+```
+
+The application must NOT assume that:
+
+```text
+admin@example.com
+```
+
+already exists.
+
+Do not hardcode demo credentials.
+
+Do not automatically pretend that an admin user exists.
+
+---
+
+# 5. USER PROFILE / ROLE
+
+After Supabase authentication succeeds, retrieve the user's application profile/role.
+
+The system must support:
+
+```text
+ADMIN
+STAFF
+```
+
+The authenticated user must be connected to the appropriate application profile.
+
+Admin should have full authorized access.
+
+Staff should use configurable permissions.
+
+---
+
+# 6. DATABASE SETUP
+
+Check whether all required Supabase tables exist.
+
+Required core tables include:
+
+```text
+profiles / users
+employees
+items
+company_settings
+```
+
+Filing:
+
+```text
+filing_out
+filing_return
+filing_rates
+```
+
+Wax:
+
+```text
+wax_out
+wax_return
+wax_job_rates
+stone_sizes
+```
+
+Polish:
+
+```text
+polish_out
+polish_return
+polish_rates
+machine_polish_out
+machine_polish_return
+```
+
+Audit:
+
+```text
+audit_logs
+```
+
+If the tables do not exist, create the required SQL migration/setup.
+
+---
+
+# 7. RLS POLICIES
+
+Verify Row Level Security.
+
+Do not disable RLS just to make the application work.
+
+Create appropriate authenticated-user policies.
+
+Admin should have the required administrative access.
+
+Staff should only access data allowed by their permissions.
+
+Make sure login/profile queries are not blocked by an incorrect RLS policy.
+
+---
+
+# 8. PROFILE CREATION
+
+When a new authenticated user is created, ensure the corresponding application profile can be created correctly.
+
+The profile should contain information such as:
+
+```text
+id
+name
+role
+status
+created_at
+updated_at
+```
+
+The authenticated Supabase user's ID should be correctly linked to the profile.
+
+Do not store plaintext passwords in the application database.
+
+Supabase Auth must handle passwords.
+
+---
+
+# 9. LOGIN ERROR HANDLING
+
+Currently the application displays:
+
+```text
+Invalid login credentials
+```
+
+Make sure this message only appears when Supabase actually returns an authentication failure.
+
+If the problem is instead:
+
+```text
+Database connection error
+Profile missing
+RLS permission error
+Environment variable missing
+Supabase configuration error
+```
+
+show an appropriate technical/user-friendly error instead of incorrectly calling everything:
+
+```text
+Invalid login credentials
+```
+
+Development console should contain the real error for debugging, but production UI should remain user-friendly.
+
+---
+
+# 10. SESSION HANDLING
+
+After successful login:
+
+```text
+Supabase Session
+      ↓
+Authenticated User
+      ↓
+Application Profile
+      ↓
+Role
+      ↓
+Dashboard
+```
+
+Persist the session correctly.
+
+If the session expires:
+
+```text
+Session Expired
+↓
+Redirect to Login
+```
+
+Logout must:
+
+```text
+Sign out from Supabase
+↓
+Clear application session
+↓
+Redirect to Login
+```
+
+Protected pages must not remain accessible after logout.
+
+---
+
+# 11. PROTECTED ROUTES
+
+The following pages must require authentication:
+
+```text
+Dashboard
+Employees
+Filing
+Wax / Setting
+Polish
+Machine Polish
+Reports
+Rate Masters
+Settings
+User Management
+About Editing
+```
+
+Unauthenticated users must always be redirected to Login.
+
+Do not rely only on hiding frontend components.
+
+---
+
+# 12. IMPORTANT: DO NOT MODIFY BUSINESS CALCULATIONS
+
+While fixing Supabase authentication/database setup:
+
+**DO NOT CHANGE ANY BUSINESS FORMULA.**
+
+The existing Jewellery Factory calculation logic is locked.
+
+Do not modify:
+
+* Filing calculations
+* Wax calculations
+* Setting calculations
+* Polish calculations
+* Machine Polish calculations
+* Rate logic
+* Employee calculations
+* Monthly reports
+
+Authentication/database fixes must not alter business calculations.
+
+---
+
+# 13. DO NOT USE FAKE DATA
+
+Do not solve the problem by:
+
+* Hardcoding `admin@example.com`
+* Hardcoding a password
+* Creating fake authentication
+* Bypassing authentication
+* Returning a fake successful login
+* Storing login credentials in localStorage
+* Removing authentication
+* Disabling RLS
+* Using fake dashboard data
+
+The application must use real Supabase authentication and real Supabase database data.
+
+---
+
+# 14. CREATE A CLEAR SETUP PROCESS
+
+If database setup is required, create a clear SQL migration/setup file.
+
+The setup should include:
+
+```text
+Tables
+Relationships
+Indexes
+RLS
+Policies
+Required initial master data
+Required triggers/functions where necessary
+```
+
+Do not include plaintext passwords in SQL.
+
+Do not create an insecure default password.
+
+---
+
+# 15. FINAL TEST
+
+After making the changes, verify the complete flow:
+
+```text
+Supabase Project
+      ↓
+Database Setup
+      ↓
+RLS
+      ↓
+Supabase Auth User
+      ↓
+Application Profile
+      ↓
+Login
+      ↓
+Authentication
+      ↓
+Role Check
+      ↓
+Dashboard
+```
+
+Then verify:
+
+### Invalid credentials
+
+```text
+Login
+↓
+Invalid credentials
+↓
+Friendly error
+```
+
+### Valid credentials
+
+```text
+Login
+↓
+Supabase Auth Success
+↓
+Profile Loaded
+↓
+Admin Role
+↓
+Dashboard Opens
+```
+
+### Logout
+
+```text
+Dashboard
+↓
+Logout
+↓
+Supabase Sign Out
+↓
+Login
+```
+
+---
+
+# 16. FINAL REQUIREMENT
+
+Do not simply tell me that Supabase needs configuration.
+
+Actually inspect the existing application code and determine:
+
+1. Which Supabase project/configuration it is using
+2. Which environment variables are required
+3. Which database tables are required
+4. Which SQL setup is required
+5. Which RLS policies are required
+6. Which profile/role structure is required
+7. Why the current login is returning `Invalid login credentials`
+
+Then fix the application so that, after the required Supabase setup is completed, a real Admin user created through Supabase Auth can successfully log in and access the dashboard.
+
+Keep the existing UI unchanged.
+
+Keep all existing business formulas unchanged.
+
+Make the application genuinely functional with Supabase.
