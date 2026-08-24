@@ -1,0 +1,189 @@
+EMPLOYEE DEPARTMENT MANAGEMENT — SMALL FEATURE UPDATE
+I want to add a Department system to the existing Employees module.
+IMPORTANT:
+Do NOT redesign the existing Employees module unnecessarily.
+Do NOT break any existing employee data or functionality.
+Do NOT change any existing business calculations, formulas, rates, or calculation logic.
+Do NOT break the existing Supabase connection or authentication.
+==================================================
+ADD DEPARTMENT FIELD TO EMPLOYEE
+==================================================
+In:
+Employees → Add Employee
+add a new required field:
+Department
+The Department field should be a dropdown.
+The Admin should be able to select the department to which the employee belongs.
+Example departments:
+Filing
+Wax / Setting
+Polish
+Machine Polish
+Other
+Use the actual department names already used in the application if they exist.
+Do not hardcode duplicate department lists in multiple places.
+==================================================
+2. SAVE DEPARTMENT WITH EMPLOYEE
+When an employee is created, the selected Department must be stored in Supabase along with that employee.
+Example:
+Employee:
+Rahul
+Department:
+Filing
+The database record must permanently associate Rahul with the Filing department.
+When editing an employee, Admin must also be able to change the employee's Department.
+==================================================
+3. DEPARTMENT-WISE EMPLOYEE DISPLAY
+This is VERY IMPORTANT.
+Once an employee is assigned to a department, that employee must appear ONLY under that department.
+Example:
+Filing Department
+Rahul
+Amit
+Suman
+Wax / Setting Department
+Rakesh
+Vikash
+Polish Department
+Arjun
+Raj
+If Rahul belongs to Filing:
+Rahul MUST NOT appear under:
+Wax / Setting
+Polish
+Machine Polish
+Other departments
+He should appear ONLY under Filing.
+==================================================
+4. DEPARTMENT FILTERING
+Wherever the application displays or selects employees, use the employee's assigned department correctly.
+For example:
+If the current transaction/module is:
+Filing
+then the Employee dropdown/list should show only employees whose department is:
+Filing
+If the current module is:
+Wax / Setting
+then show only employees assigned to:
+Wax / Setting
+If the current module is:
+Polish
+then show only Polish department employees.
+Do NOT show employees from unrelated departments.
+==================================================
+5. EMPLOYEE DROPDOWN BEHAVIOUR
+All employee dropdowns should dynamically filter employees based on the relevant department.
+Example:
+Filing → Employee dropdown
+[ Rahul ]
+[ Amit ]
+[ Suman ]
+Do NOT show:
+[ Rakesh - Wax ]
+[ Arjun - Polish ]
+The filtering must come from the employee's actual department stored in Supabase.
+Do not use frontend-only hardcoded filtering.
+==================================================
+6. EMPLOYEE LIST
+Update the Employees list/table to include:
+Employee Name
+Employee Code
+Department
+Contact Number
+Joining Date
+Status
+Actions
+Add a Department filter to the employee list.
+Example:
+Department:
+[ All Departments ▼ ]
+Options:
+All Departments
+Filing
+Wax / Setting
+Polish
+Machine Polish
+Other
+When a department is selected, show only employees belonging to that department.
+==================================================
+7. EDIT EMPLOYEE
+When editing an employee:
+Employee Name
+Employee Code
+Department
+Contact Number
+Joining Date
+Status
+Address
+Notes
+The Admin should be able to change the employee's department.
+Example:
+Rahul
+Filing → Polish
+After saving:
+Rahul must disappear from Filing employee lists/dropdowns
+and appear under Polish employee lists/dropdowns.
+==================================================
+8. EXISTING EMPLOYEES
+IMPORTANT:
+Do NOT delete existing employees.
+If existing employees do not currently have a department assigned, handle them safely.
+Show:
+Department: Not Assigned
+until the Admin assigns a department.
+Do not automatically guess or assign departments to existing employees.
+==================================================
+9. SUPABASE DATABASE
+Before modifying the database, inspect the existing employees table.
+If a department field does not exist, add the minimum required database change.
+Prefer:
+department
+or a proper department_id relationship if the application already has a Department master.
+Do NOT create duplicate department systems if one already exists.
+Do NOT drop the employees table.
+Do NOT delete existing employee data.
+Do NOT modify unrelated tables.
+If SQL migration is required, first tell me exactly what SQL is required.
+Do not execute SQL automatically.
+==================================================
+10. IMPORTANT — EXISTING CALCULATIONS
+The Department feature must NOT change any existing calculation.
+Do NOT modify:
+Filing calculations
+Wax calculations
+Setting calculations
+Polish calculations
+Machine Polish calculations
+Employee calculations
+Monthly calculations
+Reports
+Rates
+Weight calculations
+Loss calculations
+Amount calculations
+Existing formulas
+Department is only an organizational/filtering feature.
+==================================================
+11. FINAL EXPECTED BEHAVIOUR
+Admin creates employee:
+Employee:
+Rahul
+Department:
+Filing
+Save.
+Then:
+Filing
+→ Rahul visible ✅
+Wax / Setting
+→ Rahul NOT visible ❌
+Polish
+→ Rahul NOT visible ❌
+Machine Polish
+→ Rahul NOT visible ❌
+If Rahul's department is changed to Polish:
+Filing
+→ Rahul NOT visible ❌
+Polish
+→ Rahul visible ✅
+The same department filtering must work consistently throughout the application wherever employees are displayed or selected.
+Keep the existing dashboard design and UI style professional and consistent.
