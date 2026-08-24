@@ -1,0 +1,500 @@
+USER MANAGEMENT + CUSTOM ROLE & PERMISSION SYSTEM
+I want you to upgrade the existing Jewellery Factory Billing Dashboard by adding a complete, production-ready User Management and Custom Permission System.
+IMPORTANT:
+Do NOT redesign or break the existing dashboard.
+Do NOT change the existing Supabase connection.
+Do NOT break the existing authentication/login system.
+Do NOT remove any existing functionality.
+MOST IMPORTANT:
+DO NOT CHANGE ANY EXISTING BUSINESS CALCULATIONS OR FORMULAS.
+All existing Filing, Wax, Setting, Polish, Machine Polish and Monthly Report calculation formulas, rates, calculation sequences and business rules must remain EXACTLY unchanged.
+==================================================
+USER MANAGEMENT
+==================================================
+Make the existing "User Management" module fully functional.
+The Admin should be able to:
+Create new users
+View all users
+Search users
+Edit users
+Activate/deactivate users
+Manage permissions
+Reset user passwords
+View user status
+View user role
+View user creation date
+View last login if available
+Create a professional User Management page with a clean table.
+Columns:
+User Name
+User ID / Email
+Role
+Status
+Assigned Modules
+Created Date
+Last Login
+Actions
+Actions:
+View
+Edit
+Manage Access
+Reset Password
+Activate / Deactivate
+==================================================
+2. CREATE USER
+Add a professional "Create User" form.
+Fields:
+Full Name
+User ID / Login ID
+Email
+Mobile Number
+Password
+Confirm Password
+Role
+Status
+The Admin must be able to create login credentials for the new user.
+IMPORTANT SECURITY REQUIREMENT:
+Do NOT store passwords as plain text in the database.
+Use Supabase Authentication for:
+Email
+Password
+Login
+Session
+Logout
+Password reset
+The Admin can SET a password while creating a user, but the system must never display or store an existing user's password in plain text.
+For existing users, provide:
+"Reset Password"
+instead of:
+"View Password"
+==================================================
+3. ROLE SYSTEM
+Support at least these roles:
+Admin
+Staff
+Admin:
+Full access according to authorization rules.
+Staff:
+Access must depend on the permissions assigned by Admin.
+The system must be designed so that additional roles can be added later.
+==================================================
+4. CUSTOM MODULE ACCESS
+When Admin creates or edits a user, provide a professional "Access & Permissions" section.
+Admin must be able to customize exactly which modules the user can access.
+Use a clear module-wise permission interface.
+Modules should include the existing dashboard modules, including:
+Dashboard
+Employees
+Filing
+Wax / Setting
+Polish
+Machine Polish
+Reports
+Rate Masters
+Settings
+User Management
+Company Settings
+Audit Logs
+Backup & Restore
+Use the actual existing module names from the application wherever applicable.
+==================================================
+5. ACTION-LEVEL PERMISSIONS
+Permissions must not be limited only to module visibility.
+For applicable modules, allow Admin to select individual actions:
+View
+Add
+Edit
+Delete
+Export
+Print
+Example:
+Filing
+[✓] View
+[✓] Add
+[ ] Edit
+[ ] Delete
+[✓] Export
+[✓] Print
+Employees
+[✓] View
+[ ] Add
+[ ] Edit
+[ ] Delete
+Reports
+[✓] View
+[ ] Export
+[ ] Print
+This must be customizable for every user.
+==================================================
+6. SELECT ALL / CLEAR ALL
+Inside the permissions panel provide:
+Select All
+Clear All
+Select Module
+Clear Module
+For example:
+Filing
+[Select All]
+[✓] View
+[✓] Add
+[✓] Edit
+[✓] Delete
+[✓] Export
+[✓] Print
+This should make permission management fast and easy for Admin.
+==================================================
+7. USER-SPECIFIC ACCESS
+Permissions must be assigned individually to each user.
+Example:
+User A:
+Dashboard
+✓ View
+Filing
+✓ View
+✓ Add
+Employees
+✓ View
+Reports
+✓ View
+✓ Export
+Everything else:
+✗ No Access
+User A must only see and use the permissions assigned to User A.
+Do NOT give every Staff user the same permissions automatically.
+==================================================
+8. SIDEBAR ACCESS CONTROL
+The sidebar must dynamically respond to the logged-in user's permissions.
+If a user does not have access to a module:
+Do not show that module in the sidebar.
+Example:
+If user has:
+Dashboard
+Filing
+Employees
+Reports
+Then sidebar should show only:
+Dashboard
+Employees
+Filing
+Reports
+Modules such as:
+Settings
+User Management
+Rate Masters
+Backup & Restore
+must not appear if the user does not have permission.
+==================================================
+9. PAGE-LEVEL SECURITY
+Hiding sidebar items is NOT enough.
+A user must NOT be able to access unauthorized pages by manually entering the URL.
+Example:
+If User A does not have access to:
+/settings
+then manually entering the Settings URL must still result in:
+Access Denied
+or redirect to an authorized page.
+Implement permission checks at the application routing/page level.
+==================================================
+10. ACTION BUTTON SECURITY
+Buttons must also respect permissions.
+Example:
+If user has:
+Filing → View
+but does NOT have:
+Filing → Add
+Then the "Add Filing" button must not be available.
+If user has:
+Filing → View + Add
+but does NOT have:
+Edit
+Then Edit buttons must not be available.
+If user does not have Delete permission:
+Delete buttons must not be available.
+Apply this consistently across the entire application.
+==================================================
+11. DATABASE SECURITY
+This must be a REAL authorization system.
+Do NOT implement security only by hiding frontend components.
+Use Supabase Authentication + Supabase Database + appropriate RLS/authorization policies.
+Store permissions securely in the database.
+Recommended structure:
+profiles
+user_permissions
+or an equivalent normalized permission structure.
+Every permission must be linked to the authenticated Supabase user ID.
+Do not use localStorage as the source of truth for authorization.
+The backend/database must also prevent unauthorized access wherever applicable.
+==================================================
+12. USER STATUS
+Every user must have:
+Active
+Inactive
+If an Admin deactivates a user:
+The user must not be able to access protected application functionality.
+Show a clear message such as:
+"Your account has been deactivated. Please contact the administrator."
+Do not delete the user's historical records simply because the account is deactivated.
+==================================================
+13. EDIT USER
+Admin must be able to edit an existing user.
+Editable information:
+Full Name
+Email where supported
+Mobile Number
+Role
+Status
+Permissions
+Provide a dedicated:
+"Manage Access"
+screen/modal.
+The Admin should be able to modify permissions without recreating the user.
+==================================================
+14. PASSWORD MANAGEMENT
+For a newly created user:
+Admin can set the initial password.
+For an existing user:
+Admin must NOT be able to view the existing password.
+Provide:
+"Reset Password"
+functionality using Supabase Authentication.
+Never expose passwords in:
+UI
+Database tables
+Logs
+Audit logs
+API responses
+==================================================
+15. AUDIT LOGGING
+Whenever Admin changes user access, create an audit record.
+Log actions such as:
+User Created
+User Updated
+Permission Added
+Permission Removed
+Role Changed
+User Activated
+User Deactivated
+Password Reset Requested
+Audit log should include where appropriate:
+Admin/User ID
+Action
+Target User
+Date/Time
+Relevant change information
+NEVER store passwords in audit logs.
+==================================================
+16. AUTHENTICATION FLOW
+The complete flow must be:
+Admin
+↓
+User Management
+↓
+Create User
+↓
+Set Login Credentials
+↓
+Select Role
+↓
+Select Custom Permissions
+↓
+Create User
+↓
+Supabase Authentication User
+↓
+User Profile
+↓
+User Permissions
+↓
+User Login
+↓
+Load Permissions
+↓
+Display Only Authorized Modules
+↓
+Display Only Authorized Actions
+↓
+Dashboard
+==================================================
+17. LOGIN
+When the created user logs in:
+Use the existing Supabase authentication system.
+After successful authentication:
+Get authenticated Supabase user
+Load user profile
+Load role
+Load permissions
+Validate account status
+Build authorized navigation
+Allow access only to authorized pages/actions
+Do not hardcode permissions in the frontend.
+==================================================
+18. ADMIN PROTECTION
+Do not allow ordinary Staff users to access:
+User Management
+Role Management
+Permission Management
+Security Settings
+Backup & Restore
+unless the Admin explicitly grants the appropriate permission.
+However, high-risk administrative actions should always remain protected by backend authorization.
+==================================================
+19. PROFESSIONAL UI
+The User Management interface must match the existing dashboard design.
+Keep:
+Existing color system
+Existing typography
+Existing spacing
+Existing sidebar
+Existing cards
+Existing buttons
+Existing responsive design
+Make the permission panel professional and easy to understand.
+Recommended layout:
+USER DETAILS
+Full Name
+User ID
+Email
+Mobile
+Role
+Status
+ACCESS & PERMISSIONS
+Dashboard
+☑ View
+Employees
+☑ View
+☑ Add
+☐ Edit
+☐ Delete
+Filing
+☑ View
+☑ Add
+☐ Edit
+☐ Delete
+Wax / Setting
+☐ View
+Polish
+☑ View
+☑ Add
+Reports
+☑ View
+☑ Export
+☑ Print
+...
+[Select All] [Clear All]
+[Cancel] [Create User]
+==================================================
+20. DROPDOWN REQUIREMENT
+Maintain the existing sidebar/dropdown behavior.
+All child options inside sidebar modules must remain properly organized under their respective parent modules.
+Permission management should follow the same module hierarchy.
+For example:
+Filing
+├── Filing Out
+├── Filing Return
+└── Filing Reports
+Wax / Setting
+├── Wax Out
+├── Wax Return
+└── Wax Reports
+Polish
+├── Polish Out
+├── Polish Return
+└── Polish Reports
+If applicable, allow permissions at both parent-module and child-module level.
+==================================================
+21. NO FAKE DATA
+Do not use fake/demo users or fake permissions.
+All users and permissions must be stored and retrieved from the real Supabase database.
+Do not hardcode:
+admin@example.com
+or any demo password.
+==================================================
+22. EXISTING SYSTEM MUST REMAIN SAFE
+Do not break:
+Existing Supabase connection
+Existing Admin login
+Existing Dashboard
+Existing navigation
+Existing database
+Existing calculations
+Existing reports
+Existing business logic
+Before modifying existing database structures, inspect the current schema and reuse existing tables where possible.
+Do not delete existing production data.
+Do not reset or drop existing tables.
+Do not disable RLS.
+==================================================
+23. CALCULATION LOGIC LOCK
+THIS IS A HARD REQUIREMENT.
+DO NOT CHANGE ANY EXISTING BUSINESS FORMULA.
+The following calculation systems must remain exactly as they currently work:
+Filing
+Wax
+Setting
+Polish
+Machine Polish
+Employee calculations
+Monthly calculations
+Reports
+PDF calculations
+Do not modify:
+Formula
+Rate
+Calculation sequence
+Rounding logic
+Weight calculation
+Loss calculation
+Amount calculation
+Employee calculation
+Monthly aggregation
+The User Management / Permission feature must be completely independent from the existing calculation engine.
+==================================================
+24. FINAL TESTING
+After implementation, test the following:
+TEST 1:
+Create Admin user
+→ Login
+→ Full authorized access
+TEST 2:
+Create Staff user
+→ Give only Dashboard + Filing View
+→ Login
+→ Only Dashboard and Filing should be visible
+TEST 3:
+Staff without Add permission
+→ Filing page opens
+→ Add button must NOT appear
+TEST 4:
+Staff without Edit permission
+→ Edit button must NOT appear
+TEST 5:
+Staff without Delete permission
+→ Delete button must NOT appear
+TEST 6:
+Staff manually enters unauthorized URL
+→ Access Denied / Redirect
+TEST 7:
+Admin changes permission
+→ User's access updates correctly
+TEST 8:
+Admin deactivates user
+→ User cannot access protected application
+TEST 9:
+Logout
+→ Session ends
+→ Protected pages cannot be accessed
+TEST 10:
+Verify existing business calculations
+→ All existing formulas remain EXACTLY unchanged
+==================================================
+FINAL REQUIREMENT
+Build this as a real production-ready User Management + Role-Based Access Control system integrated with the existing Supabase backend.
+Do not create a visual-only prototype.
+Do not use fake authentication.
+Do not use fake permissions.
+Do not hardcode users.
+Do not store plaintext passwords.
+Do not weaken security.
+Do not modify existing business calculations.
+Do not redesign the existing dashboard unnecessarily.
+The final result must allow the Admin to create a user, provide login credentials, customize exactly which modules and actions that user can access, and ensure that after login the user can see and use ONLY the permissions assigned to that user.
