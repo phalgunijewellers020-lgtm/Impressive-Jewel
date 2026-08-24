@@ -1,0 +1,1832 @@
+# BUILD A COMPLETE WORKING JEWELLERY FACTORY BILLING & WORK MANAGEMENT DASHBOARD
+
+## 1. PROJECT OBJECTIVE
+
+Build a complete, production-ready **Jewellery Factory Work Management & Billing Dashboard** from scratch.
+
+This must be a **real working business application**, not a static dashboard, Figma prototype, mockup, or presentation.
+
+The application must:
+
+**REAL DATABASE DATA → BACKEND CALCULATIONS → DASHBOARD → REPORTS → PDF**
+
+The application must use **Supabase as the backend/database** and must be structured so that it can be deployed to production.
+
+The existing business requirements and calculation formulas provided in the original specification are the source of truth.
+
+---
+
+# 2. CRITICAL RULE — DO NOT CHANGE BUSINESS CALCULATIONS
+
+## THIS RULE IS ABSOLUTELY MANDATORY
+
+Do NOT modify, simplify, reinterpret, replace, approximate, or invent any existing business calculation formula.
+
+All formulas specified in the original Jewellery Work Management System specification must remain exactly as defined.
+
+The application must reproduce the existing valid Excel/business calculation logic accurately.
+
+If a formula is explicitly provided, implement that formula exactly.
+
+For example:
+
+### Filing
+
+Loss as Filing:
+
+```text
+Loss as Filing
+=
+Filing Out Weight
+-
+Filing Return Weight
+```
+
+Wastage:
+
+```text
+Wastage
+=
+Adjusted Return Weight × 0.012
+```
+
+Balance Silver:
+
+```text
+Balance Silver
+=
+Wastage
+-
+Loss as Filing
+```
+
+Amount Payable:
+
+```text
+Amount Payable
+=
+Adjusted Return Weight × 2.5
+```
+
+### Wax / Setting
+
+Total Setting Count:
+
+```text
+Total Setting Count
+=
+Return Wax Piece Count
+×
+Setting Stone Count
+```
+
+Amount:
+
+```text
+Amount
+=
+Total Setting Count × Job Rate
+```
+
+Net Stone Weight:
+
+```text
+Net Stone Weight
+=
+Outward Stone Weight
+-
+Return Stone Weight
+```
+
+Net Stone Count:
+
+```text
+Net Stone Count
+=
+Outward Stone Count
+-
+(
+Return Stone Count
++
+Setting Stone Count × Return Wax Piece
+)
+```
+
+Inwards:
+
+```text
+Inwards
+=
+Return Stone Weight
++
+Return Wax Weight
+```
+
+Outwards:
+
+```text
+Outwards
+=
+Outward Stone Weight
++
+Outward Wax Weight
+```
+
+Dispute Weight:
+
+```text
+Dispute Weight
+=
+(
+Outward Wax Weight
++
+Outward Stone Weight
+)
+-
+(
+Return Wax Weight
++
+Return Stone Weight
+)
+```
+
+### Polish
+
+Balance Silver:
+
+```text
+Balance Silver
+=
+Polish Out Weight
+-
+Polish Return Weight
+```
+
+### Machine Polish
+
+Machine Polish Loss:
+
+```text
+Machine Polish Loss
+=
+Machine Polish Out Weight
+-
+Machine Polish Return Weight
+```
+
+These formulas MUST NOT be changed.
+
+Do not introduce alternative formulas.
+
+Do not calculate the same value differently on different screens.
+
+---
+
+# 3. SINGLE CENTRAL CALCULATION ENGINE
+
+Create one centralized backend calculation engine.
+
+The calculation engine must be the single source of truth for all business calculations.
+
+Architecture:
+
+```text
+SUPABASE DATABASE
+        ↓
+BACKEND / SERVER CALCULATION ENGINE
+        ↓
+CALCULATED REPORT DATA
+        ↓
+ ┌───────────────┬────────────────┬──────────────┐
+ ↓               ↓                ↓
+DASHBOARD    EMPLOYEE REPORT   MONTHLY REPORT
+                                      ↓
+                                     PDF
+```
+
+The following must always use the same calculation result:
+
+```text
+Dashboard
+=
+Employee Calculation
+=
+Monthly Report
+=
+PDF
+```
+
+Never create separate formulas for Dashboard, Reports, and PDF.
+
+Never manually enter calculated totals.
+
+Never hardcode calculated totals.
+
+---
+
+# 4. SUPABASE BACKEND
+
+Use **Supabase** as the production backend.
+
+Use:
+
+* Supabase PostgreSQL database
+* Supabase Authentication
+* Supabase Storage where required
+* Row Level Security
+* Database relationships
+* Secure server-side operations
+
+The application must not use fake local data as the actual production data source.
+
+All real transactions must be stored in Supabase.
+
+---
+
+# 5. SUPABASE DATABASE STRUCTURE
+
+Create proper relational tables.
+
+Minimum core tables:
+
+```text
+users / profiles
+employees
+items
+company_settings
+```
+
+Filing:
+
+```text
+filing_out
+filing_return
+filing_rates
+```
+
+Wax / Setting:
+
+```text
+wax_out
+wax_return
+wax_job_rates
+stone_sizes
+```
+
+Polish:
+
+```text
+polish_out
+polish_return
+polish_rates
+machine_polish_out
+machine_polish_return
+```
+
+Audit:
+
+```text
+audit_logs
+```
+
+Every transaction should contain appropriate fields such as:
+
+```text
+id
+date
+employee_id
+item_id
+weight
+pieces
+created_by
+created_at
+updated_at
+```
+
+Use proper foreign keys.
+
+Use appropriate PostgreSQL numeric/decimal types for jewellery weights.
+
+Do NOT use unsafe floating-point arithmetic for critical calculations.
+
+---
+
+# 6. SUPABASE SECURITY
+
+Implement proper authentication.
+
+Users must not access the dashboard without authentication.
+
+Use:
+
+```text
+Login
+↓
+Supabase Authentication
+↓
+Authenticated Session
+↓
+Dashboard
+```
+
+Implement:
+
+* Login
+* Logout
+* Session persistence
+* Session expiration handling
+* Protected routes
+* Admin role
+* Staff role
+* Role-based permissions
+
+Passwords must never be exposed in the frontend.
+
+Use Supabase Auth instead of storing raw passwords in application tables.
+
+---
+
+# 7. ROW LEVEL SECURITY
+
+Enable Supabase Row Level Security.
+
+Do not leave production tables publicly writable/readable.
+
+Create policies according to authenticated user roles.
+
+Admin should have full permitted access.
+
+Staff access should be configurable according to permissions.
+
+Never expose service-role credentials in frontend code.
+
+Supabase service-role keys must remain server-side only.
+
+---
+
+# 8. DASHBOARD — MAIN REQUIREMENT
+
+Create a **premium, professional, production-quality Jewellery Factory Dashboard**.
+
+The dashboard should look like a serious business management application.
+
+It must NOT look like:
+
+* A generic admin template
+* A basic Bootstrap dashboard
+* A random AI-generated dashboard
+* A simple card grid
+* A Figma-only prototype
+
+The design should feel:
+
+* Premium
+* Clean
+* Professional
+* Modern
+* Elegant
+* Business-focused
+* Jewellery-industry appropriate
+* Highly readable
+* Practical for daily factory use
+
+---
+
+# 9. DASHBOARD VISUAL DESIGN
+
+Use a sophisticated jewellery-business visual identity.
+
+Recommended visual direction:
+
+### Primary
+
+Deep charcoal / graphite
+
+### Secondary
+
+Warm champagne / muted gold
+
+### Background
+
+Warm off-white / very light neutral
+
+### Cards
+
+Clean white / slightly warm surfaces
+
+### Text
+
+Dark graphite
+
+### Accent
+
+Controlled premium gold accent
+
+Do NOT overuse gold.
+
+Gold should be used for:
+
+* Important highlights
+* Active states
+* Key numbers
+* Icons
+* Buttons
+* Selected navigation
+* Small visual accents
+
+The application should feel premium without becoming flashy.
+
+Avoid excessive gradients.
+
+Avoid excessive shadows.
+
+Avoid overly rounded cartoon-style cards.
+
+Use consistent spacing, typography, border radius, shadows, and hierarchy.
+
+---
+
+# 10. TYPOGRAPHY
+
+Use a modern professional sans-serif font.
+
+Typography must have clear hierarchy:
+
+```text
+Page Title
+Section Title
+Card Title
+Metric
+Supporting Text
+Table Text
+Helper Text
+```
+
+Numbers should be highly readable because the dashboard contains weights, counts, rates, and amounts.
+
+---
+
+# 11. DASHBOARD HEADER
+
+Create a professional top header.
+
+Header should include:
+
+* Hamburger menu
+* Page title
+* Date/filter area
+* Notification area if implemented
+* User profile
+* User name
+* Role
+* Logout access
+
+The header must remain clean and uncluttered.
+
+---
+
+# 12. SIDEBAR — CRITICAL REQUIREMENT
+
+Create a fully functional responsive sidebar.
+
+At the top:
+
+```text
+☰
+Company Logo
+Company Name
+```
+
+Navigation:
+
+```text
+Dashboard
+
+Employees
+
+Filing
+
+Wax / Setting
+
+Polish
+
+Settings
+
+About
+
+Logout
+```
+
+The sidebar must NOT simply show every submenu permanently.
+
+---
+
+# 13. SIDEBAR DROPDOWN / ACCORDION SYSTEM
+
+Every navigation section that contains sub-options must behave as a proper dropdown/accordion.
+
+Example:
+
+```text
+Filing
+   ▾
+   Filing Out
+   Filing Return
+   Employee Calculation
+   Monthly Report
+   Rate Master
+```
+
+When collapsed:
+
+```text
+Filing   >
+```
+
+When expanded:
+
+```text
+Filing   ˅
+   Filing Out
+   Filing Return
+   Employee Calculation
+   Monthly Report
+   Rate Master
+```
+
+Clicking the parent menu should expand/collapse its submenu smoothly.
+
+Only the required submenu should open.
+
+Use a clear chevron indicator.
+
+Active submenu should have a clear visual state.
+
+Do not navigate to a random page when the parent dropdown is clicked unless explicitly configured.
+
+---
+
+# 14. SIDEBAR MENU STRUCTURE
+
+Use this exact navigation hierarchy.
+
+```text
+Dashboard
+
+Employees
+   ├── Employee List
+   ├── Add Employee
+   └── Employee Profile
+
+Filing
+   ├── Filing Out
+   ├── Filing Return
+   ├── Employee Calculation
+   ├── Monthly Report
+   └── Rate Master
+
+Wax / Setting
+   ├── Wax / Stone Out
+   ├── Wax / Stone Return
+   ├── Employee Calculation
+   ├── Monthly Report
+   ├── Job Rate Master
+   └── Stone Size Master
+
+Polish
+   ├── Polish Out
+   ├── Polish Return
+   ├── Employee Calculation
+   ├── Monthly Report
+   ├── Rate Master
+   └── Machine Polish
+
+Settings
+   ├── User Management
+   ├── Item Master
+   └── System Settings
+
+About
+
+Logout
+```
+
+Do not change the business module structure.
+
+---
+
+# 15. SIDEBAR RESPONSIVE BEHAVIOUR
+
+### Desktop
+
+Sidebar can remain visible.
+
+Support:
+
+```text
+Expanded
+Collapsed
+```
+
+Expanded:
+
+```text
+Icon + Text
+```
+
+Collapsed:
+
+```text
+Icon only
+```
+
+Main content must automatically resize.
+
+### Mobile
+
+Sidebar must be closed by default.
+
+Click:
+
+```text
+☰
+```
+
+Then:
+
+```text
+Sidebar slides from left
++
+Dark overlay
+```
+
+Click overlay:
+
+```text
+Sidebar closes
+```
+
+Click submenu:
+
+```text
+Navigate
++
+Sidebar closes
+```
+
+The sidebar animation must be smooth.
+
+Do not instantly jump between states.
+
+---
+
+# 16. DASHBOARD DATE FILTER
+
+Dashboard must have a working date filter.
+
+Options:
+
+```text
+Today
+Yesterday
+This Week
+This Month
+Previous Month
+Custom Date Range
+```
+
+Changing the filter must trigger real database-backed calculations.
+
+Do NOT simply change the displayed label.
+
+Every dashboard number must correspond to the selected date range.
+
+---
+
+# 17. DASHBOARD SUMMARY
+
+Create premium summary sections.
+
+## FILING
+
+Show:
+
+```text
+Filing Out
+Filing Return
+Loss as Filing
+Wastage
+Balance Silver
+Amount Payable
+```
+
+## WAX / SETTING
+
+Show:
+
+```text
+Wax / Stone Out
+Wax / Stone Return
+Stone Weight
+Stone Pieces
+Setting Count
+Net Stone Weight
+Net Stone Count
+Dispute Weight
+Amount Payable
+```
+
+## POLISH
+
+Show:
+
+```text
+Polish Out
+Polish Return
+Balance Silver
+Loss
+Amount Payable
+```
+
+## MACHINE POLISH
+
+Show:
+
+```text
+Machine Polish Out
+Machine Polish Return
+Machine Polish Loss
+```
+
+All numbers must come from Supabase data and the centralized calculation engine.
+
+---
+
+# 18. DASHBOARD KPI CARD DESIGN
+
+Do not create huge cards that consume most of the screen.
+
+Create compact premium KPI cards.
+
+Each card should contain:
+
+```text
+Icon
+Label
+Main Value
+Unit
+Optional comparison/trend
+```
+
+Example:
+
+```text
+FILING OUT
+
+1,245.850 g
+```
+
+Use appropriate units.
+
+Weights should be clearly distinguishable from:
+
+* Pieces
+* Counts
+* Currency
+* Rates
+
+---
+
+# 19. DASHBOARD QUICK ACTIONS
+
+Create a professional Quick Actions section.
+
+Buttons:
+
+```text
++ Filing Out
++ Filing Return
++ Wax / Stone Out
++ Wax / Stone Return
++ Polish Out
++ Polish Return
++ Machine Polish Out
++ Machine Polish Return
++ Add Employee
+```
+
+Every button must open the actual working data-entry form.
+
+No fake buttons.
+
+---
+
+# 20. DASHBOARD CHARTS
+
+Create live database-powered charts.
+
+Required charts:
+
+### Filing
+
+```text
+Filing Out vs Filing Return
+```
+
+### Wax / Setting
+
+```text
+Wax / Stone Out vs Return
+```
+
+### Polish
+
+```text
+Polish Out vs Return
+```
+
+### Employee
+
+```text
+Employee-wise Work
+```
+
+### Employee Payable
+
+```text
+Employee-wise Amount Payable
+```
+
+### Trend
+
+```text
+Monthly Work Trend
+```
+
+### Reconciliation
+
+```text
+Material Difference / Dispute
+```
+
+Charts must respond to dashboard date filters.
+
+Do not hardcode chart data.
+
+---
+
+# 21. DASHBOARD LAYOUT
+
+Use a clear professional hierarchy.
+
+Recommended structure:
+
+```text
+┌─────────────────────────────────────────────────────┐
+│ Header / User / Date Filter                         │
+└─────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────┐
+│ Page Title + Date Range                             │
+└─────────────────────────────────────────────────────┘
+
+┌────────────┬────────────┬────────────┬─────────────┐
+│ Filing     │ Wax        │ Polish     │ Machine     │
+│ KPI        │ KPI        │ KPI        │ KPI         │
+└────────────┴────────────┴────────────┴─────────────┘
+
+┌──────────────────────────┬──────────────────────────┐
+│ Filing Out vs Return     │ Wax Out vs Return        │
+│ Chart                    │ Chart                    │
+└──────────────────────────┴──────────────────────────┘
+
+┌──────────────────────────┬──────────────────────────┐
+│ Polish Out vs Return     │ Employee-wise Work       │
+│ Chart                    │ Chart                    │
+└──────────────────────────┴──────────────────────────┘
+
+┌─────────────────────────────────────────────────────┐
+│ Employee Payable / Material Dispute                 │
+└─────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────┐
+│ Quick Actions                                       │
+└─────────────────────────────────────────────────────┘
+```
+
+Do not copy this exact visual blindly.
+
+Use it as layout hierarchy.
+
+---
+
+# 22. DASHBOARD EMPTY STATES
+
+If the database has no transactions:
+
+Do NOT display fake values.
+
+Show:
+
+```text
+No Filing transactions found.
+
++ Add Filing Out
++ Add Filing Return
+```
+
+Same principle for Wax, Polish, Employees, and Reports.
+
+---
+
+# 23. LOADING STATES
+
+Use professional loading states.
+
+Examples:
+
+```text
+Skeleton KPI cards
+Skeleton tables
+Chart loading state
+```
+
+Do not show blank screens while data loads.
+
+---
+
+# 24. ERROR STATES
+
+Use professional error messages.
+
+Examples:
+
+```text
+Unable to load dashboard data.
+Please try again.
+```
+
+Do not expose technical database errors directly to normal users.
+
+Log technical errors appropriately.
+
+---
+
+# 25. TOAST NOTIFICATIONS
+
+Use clean toast notifications for:
+
+```text
+Transaction saved successfully.
+Transaction updated successfully.
+Transaction deleted successfully.
+Employee added successfully.
+Rate updated successfully.
+Report generated successfully.
+```
+
+Errors:
+
+```text
+Unable to save transaction.
+Please check the entered information.
+```
+
+---
+
+# 26. RESPONSIVE DESIGN
+
+The dashboard must work properly on:
+
+* Desktop
+* Laptop
+* Tablet
+* Mobile
+
+Do NOT simply shrink the desktop dashboard.
+
+Create proper responsive layouts.
+
+### Mobile
+
+Cards:
+
+```text
+Stack vertically
+```
+
+Charts:
+
+```text
+Resize automatically
+```
+
+Filters:
+
+```text
+Vertical / full width
+```
+
+Quick actions:
+
+```text
+2-column grid or full-width
+```
+
+Tables:
+
+```text
+Responsive cards
+OR
+Internal horizontal scroll
+```
+
+Never allow the entire webpage to become horizontally scrollable because of a table.
+
+---
+
+# 27. EMPLOYEE MODULE
+
+Use one central Employee Master.
+
+Do not create separate employee databases for Filing, Wax, and Polish.
+
+Employee fields:
+
+```text
+Employee ID
+Employee Name
+Contact Number
+Joining Date
+Status
+Address
+Notes
+```
+
+Support:
+
+```text
+Add
+Edit
+View
+Activate
+Deactivate
+Search
+Filter
+```
+
+Do not permanently delete employees with historical transactions.
+
+---
+
+# 28. ITEM MASTER
+
+Create:
+
+```text
+Settings → Item Master
+```
+
+Fields:
+
+```text
+Item ID
+Item Name
+Status
+```
+
+Support:
+
+```text
+Add
+Edit
+Activate/Deactivate
+Search
+```
+
+Do not allow duplicate items.
+
+---
+
+# 29. FILING RATE MASTER
+
+CRITICAL:
+
+Filing rates must be **ITEM BASED**.
+
+Never use:
+
+```text
+Employee + Item
+```
+
+Use:
+
+```text
+Item
+↓
+Filing Rate Master
+↓
+Loss Rate + Amount Rate
+```
+
+The same item must use the same filing rate regardless of employee.
+
+Do not hardcode rates in frontend.
+
+Rates must come from Supabase.
+
+---
+
+# 30. POLISH RATE MASTER
+
+CRITICAL:
+
+Polish rates must be **ITEM BASED**.
+
+Use:
+
+```text
+Item
+↓
+Polish Rate Master
+↓
+Loss + Amount
+```
+
+Employee must NOT affect the Polish rate.
+
+---
+
+# 31. WAX / SETTING RATE MASTER
+
+Wax rates must be based on:
+
+```text
+Setting Category / Job
+```
+
+NOT employee.
+
+Initial configurable values:
+
+```text
+Setting & Tatal = 0.10
+Only Setting = 0.05
+Only Tatal = 0.05
+```
+
+These values must be stored in Supabase and configurable by authorized users.
+
+Do not hardcode them into calculation logic.
+
+---
+
+# 32. DATA ENTRY
+
+Every transaction page must be fully functional.
+
+Examples:
+
+```text
+Filing Out
+Filing Return
+Wax / Stone Out
+Wax / Stone Return
+Polish Out
+Polish Return
+Machine Polish Out
+Machine Polish Return
+```
+
+Each must support:
+
+```text
+Create
+Read
+Update
+Delete
+```
+
+Delete must require confirmation.
+
+After create/update/delete:
+
+```text
+Database
+↓
+Calculation Engine
+↓
+Dashboard
+↓
+Reports
+```
+
+must update.
+
+---
+
+# 33. SEARCH / FILTER / SORT
+
+Relevant pages must support:
+
+```text
+Search
+Sort
+Date Filter
+Employee Filter
+Item Filter
+Category Filter
+Clear Filters
+Pagination
+```
+
+Do not load thousands of database records into the browser unnecessarily.
+
+Use server-side/database pagination.
+
+---
+
+# 34. REPORTING
+
+Create working:
+
+```text
+Employee Calculation
+Monthly Report
+```
+
+for:
+
+```text
+Filing
+Wax / Setting
+Polish
+Machine Polish
+```
+
+Reports must use the same centralized calculation engine.
+
+---
+
+# 35. PDF
+
+Create professional PDFs.
+
+PDF must contain:
+
+```text
+Company Logo
+Company Name
+Address
+Contact
+Report Title
+Employee Name
+Employee ID
+Date Range
+Generated Date
+Transaction Details
+Calculation Summary
+Grand Total
+Page Numbers
+```
+
+PDF calculation must NEVER have its own formulas.
+
+Use:
+
+```text
+Database
+↓
+Calculation Engine
+↓
+Report Data
+↓
+PDF Generator
+```
+
+Screen result must equal PDF result.
+
+---
+
+# 36. COMPANY INFORMATION
+
+Create:
+
+```text
+About
+```
+
+and:
+
+```text
+Settings → System Settings
+```
+
+Company fields:
+
+```text
+Company Logo
+Company Name
+Address
+City
+State
+PIN Code
+Contact Number
+Alternate Contact
+Email
+Website
+GST Number
+Business Registration Number
+Additional Information
+```
+
+Store company information in Supabase.
+
+Do not hardcode it.
+
+Use the saved information on:
+
+* Login
+* About
+* Dashboard branding
+* PDFs
+
+---
+
+# 37. DATA VALIDATION
+
+Validate:
+
+### Weight
+
+```text
+Valid decimal
+Non-invalid value
+```
+
+### Pieces
+
+```text
+Whole number
+```
+
+### Date
+
+```text
+Valid date
+```
+
+### Employee
+
+```text
+Must exist
+```
+
+### Item
+
+```text
+Must exist
+```
+
+### Rate
+
+```text
+Must exist when required
+```
+
+Show clear validation messages.
+
+---
+
+# 38. DECIMAL PRECISION
+
+Jewellery weight calculations are financially and operationally important.
+
+Use PostgreSQL numeric/decimal fields.
+
+Do not use JavaScript floating-point arithmetic for critical calculations without proper decimal handling.
+
+Do not silently round intermediate values.
+
+Only round where required for display or PDF.
+
+---
+
+# 39. PERFORMANCE
+
+The application is intended for daily factory use.
+
+Therefore:
+
+* Use indexed database fields
+* Use pagination
+* Use efficient queries
+* Avoid unnecessary API calls
+* Do not fetch thousands of transactions unnecessarily
+* Aggregate data server-side where practical
+* Cache safe reference/master data where appropriate
+* Keep dashboard queries efficient
+
+---
+
+# 40. REAL-TIME / DASHBOARD REFRESH
+
+After saving, editing, or deleting a transaction, the dashboard should update.
+
+Use Supabase queries/realtime where appropriate.
+
+Do not require a full browser refresh for normal transaction updates.
+
+---
+
+# 41. DEPLOYMENT REQUIREMENTS
+
+The application must be deployment-ready.
+
+Environment variables must be used.
+
+Never hardcode:
+
+```text
+Supabase URL
+Supabase keys
+Secrets
+Database credentials
+```
+
+Frontend should only receive the appropriate public Supabase configuration.
+
+Private/service-role credentials must remain server-side.
+
+Prepare the application for deployment to a production hosting platform.
+
+---
+
+# 42. ENVIRONMENT VARIABLES
+
+Use an environment-based configuration.
+
+Example:
+
+```text
+SUPABASE_URL
+SUPABASE_ANON_KEY
+SUPABASE_SERVICE_ROLE_KEY
+```
+
+Only expose variables that are safe for the browser.
+
+Do NOT expose service-role credentials to frontend JavaScript.
+
+---
+
+# 43. PRODUCTION QUALITY
+
+The final application must include:
+
+```text
+Real Authentication
+Real Supabase Database
+Real CRUD
+Real Calculations
+Real Dashboard
+Real Reports
+Real PDF
+Real Permissions
+Real Validation
+Real Responsive UI
+Real Deployment Configuration
+```
+
+Do not leave placeholder functionality.
+
+Do not create fake API responses.
+
+Do not create static JSON as the production data source.
+
+Do not hardcode dashboard numbers.
+
+---
+
+# 44. DESIGN SYSTEM
+
+Create a consistent design system.
+
+Define:
+
+```text
+Primary Color
+Secondary Color
+Background
+Surface
+Text
+Muted Text
+Border
+Success
+Warning
+Error
+Info
+```
+
+Use a restrained premium jewellery aesthetic.
+
+The UI must remain readable and professional.
+
+Maintain consistency across:
+
+* Sidebar
+* Header
+* Cards
+* Forms
+* Tables
+* Buttons
+* Dropdowns
+* Modals
+* Charts
+* Reports
+
+---
+
+# 45. MICRO INTERACTIONS
+
+Use subtle animations only.
+
+Examples:
+
+* Sidebar slide
+* Dropdown expand/collapse
+* Button hover
+* Card hover
+* Modal open
+* Toast appearance
+* Loading transitions
+
+Animations must be fast and professional.
+
+Do not over-animate the application.
+
+---
+
+# 46. IMPORTANT: DO NOT CHANGE THE ORIGINAL BUSINESS STRUCTURE
+
+Do not remove modules.
+
+Do not merge modules simply for convenience.
+
+Do not change terminology without a strong technical reason.
+
+Do not change calculation formulas.
+
+Do not change rate logic.
+
+Do not change employee relationships.
+
+Do not replace real database operations with frontend-only state.
+
+The original Jewellery Work Management specification remains the business source of truth.
+
+---
+
+# 47. DEVELOPMENT ORDER
+
+Build the application in this order:
+
+## Phase 1
+
+```text
+Project Setup
+Supabase Connection
+Authentication
+Protected Routes
+Basic Design System
+```
+
+## Phase 2
+
+```text
+Database Schema
+RLS Policies
+Employees
+Items
+Company Settings
+```
+
+## Phase 3
+
+```text
+Filing
+Wax / Setting
+Polish
+Machine Polish
+```
+
+## Phase 4
+
+```text
+Central Calculation Engine
+Validation
+Rate Masters
+```
+
+## Phase 5
+
+```text
+Dashboard
+Charts
+Filters
+Quick Actions
+```
+
+## Phase 6
+
+```text
+Employee Calculations
+Monthly Reports
+```
+
+## Phase 7
+
+```text
+PDF
+Excel Export
+CSV Export
+Print
+```
+
+## Phase 8
+
+```text
+Responsive Mobile UI
+Sidebar Dropdown System
+Performance Optimization
+Audit Logs
+```
+
+## Phase 9
+
+```text
+Production Testing
+Security Testing
+Calculation Testing
+Deployment
+```
+
+---
+
+# 48. TESTING REQUIREMENT
+
+Before considering the application complete, test:
+
+### Authentication
+
+```text
+Valid login
+Invalid login
+Logout
+Session expiration
+Protected route
+Role permissions
+```
+
+### Database
+
+```text
+Create
+Read
+Update
+Delete
+Relationships
+RLS
+```
+
+### Calculations
+
+Test every formula against known expected results.
+
+The application must NOT change the specified formulas.
+
+### Dashboard
+
+Verify:
+
+```text
+Dashboard values
+=
+Calculation Engine values
+```
+
+### Reports
+
+Verify:
+
+```text
+Report values
+=
+Calculation Engine values
+```
+
+### PDF
+
+Verify:
+
+```text
+PDF values
+=
+Report values
+```
+
+### Responsive
+
+Test:
+
+```text
+Desktop
+Laptop
+Tablet
+Mobile
+```
+
+---
+
+# 49. FINAL ACCEPTANCE CRITERIA
+
+The application will be considered complete ONLY when:
+
+* Supabase is connected
+* Authentication works
+* Protected routes work
+* Admin/Staff roles work
+* Employees work
+* Items work
+* Filing works
+* Wax / Setting works
+* Polish works
+* Machine Polish works
+* Rate Masters work
+* All CRUD operations work
+* All calculations use the exact specified formulas
+* Central calculation engine works
+* Dashboard uses real database data
+* Dashboard filters work
+* Dashboard charts use real data
+* Employee calculations work
+* Monthly reports work
+* PDFs work
+* Export works
+* Company information works
+* Sidebar dropdowns work
+* Sidebar open/close animation works
+* Mobile layout works
+* Desktop layout works
+* Validation works
+* Audit information works
+* RLS/security works
+* Production environment variables work
+* Application can be deployed
+
+---
+
+# 50. MOST IMPORTANT FINAL INSTRUCTION
+
+BUILD A REAL WORKING APPLICATION.
+
+Do NOT build a static UI.
+
+Do NOT build only a dashboard mockup.
+
+Do NOT use fake numbers.
+
+Do NOT hardcode production data.
+
+Do NOT change any business calculation formula from the original specification.
+
+Do NOT create separate formulas for Dashboard, Reports, and PDF.
+
+Use:
+
+```text
+SUPABASE
+   ↓
+REAL DATABASE
+   ↓
+CENTRAL CALCULATION ENGINE
+   ↓
+DASHBOARD
+   ↓
+EMPLOYEE CALCULATIONS
+   ↓
+MONTHLY REPORTS
+   ↓
+PDF
+```
+
+The final result must be a **premium, professional, production-ready Jewellery Factory Work Management & Billing Dashboard**, connected to Supabase and ready for deployment.
+
+The UI must look polished and trustworthy enough for real daily factory/business operations.
+
+The sidebar must contain proper dropdown/accordion submenus.
+
+The dashboard must be completely live and database-driven.
+
+The original business formulas and calculation logic are **LOCKED and MUST NOT BE CHANGED**.
